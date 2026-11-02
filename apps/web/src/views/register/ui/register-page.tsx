@@ -1,6 +1,9 @@
+'use client';
+
 import Link from 'next/link';
 
 import { RegisterForm } from '@/features/auth-register';
+import { useI18n } from '@/shared/i18n';
 import {
   Card,
   CardContent,
@@ -11,20 +14,22 @@ import {
 } from '@/shared/ui/card';
 
 export function RegisterPage() {
+  const { t } = useI18n();
+
   return (
     <main className="flex min-h-screen items-center justify-center p-4">
       <Card className="w-full max-w-sm">
         <CardHeader>
-          <CardTitle className="text-xl">Регистрация</CardTitle>
-          <CardDescription>Создайте аккаунт, чтобы вести учёт расходов</CardDescription>
+          <CardTitle className="text-xl">{t('auth.register.title')}</CardTitle>
+          <CardDescription>{t('auth.register.description')}</CardDescription>
         </CardHeader>
         <CardContent>
           <RegisterForm />
         </CardContent>
         <CardFooter className="justify-center text-sm text-muted-foreground">
-          Уже есть аккаунт?&nbsp;
+          {t('auth.register.haveAccount')}&nbsp;
           <Link href="/login" className="text-foreground underline underline-offset-4">
-            Войти
+            {t('auth.register.toLogin')}
           </Link>
         </CardFooter>
       </Card>

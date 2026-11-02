@@ -29,7 +29,7 @@ export async function http<T>(path: string, options: RequestOptions = {}): Promi
       body: body !== undefined ? JSON.stringify(body) : undefined,
     });
   } catch {
-    throw new ApiError(0, ['Не удалось подключиться к серверу']);
+    throw new ApiError(0, []);
   }
 
   const data: unknown = await response.json().catch(() => null);

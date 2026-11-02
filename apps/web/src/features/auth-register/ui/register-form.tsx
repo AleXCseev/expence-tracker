@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import { Controller } from 'react-hook-form';
 
+import { useI18n, type MessageKey } from '@/shared/i18n';
 import { Button } from '@/shared/ui/button';
 import { Checkbox } from '@/shared/ui/checkbox';
 import { Input } from '@/shared/ui/input';
@@ -11,6 +12,7 @@ import { Label } from '@/shared/ui/label';
 import { useRegisterForm } from '../model/use-register-form';
 
 export function RegisterForm() {
+  const { t } = useI18n();
   const {
     form: {
       register,
@@ -24,12 +26,14 @@ export function RegisterForm() {
   return (
     <form onSubmit={onSubmit} className="flex flex-col gap-4" noValidate>
       <div className="flex flex-col gap-2">
-        <Label htmlFor="name">Имя</Label>
+        <Label htmlFor="name">{t('common.name')}</Label>
         <Input id="name" autoComplete="name" aria-invalid={!!errors.name} {...register('name')} />
-        {errors.name && <p className="text-sm text-destructive">{errors.name.message}</p>}
+        {errors.name && (
+          <p className="text-sm text-destructive">{t(errors.name.message as MessageKey)}</p>
+        )}
       </div>
       <div className="flex flex-col gap-2">
-        <Label htmlFor="email">Email</Label>
+        <Label htmlFor="email">{t('common.email')}</Label>
         <Input
           id="email"
           type="email"
@@ -38,10 +42,12 @@ export function RegisterForm() {
           aria-invalid={!!errors.email}
           {...register('email')}
         />
-        {errors.email && <p className="text-sm text-destructive">{errors.email.message}</p>}
+        {errors.email && (
+          <p className="text-sm text-destructive">{t(errors.email.message as MessageKey)}</p>
+        )}
       </div>
       <div className="flex flex-col gap-2">
-        <Label htmlFor="password">Пароль</Label>
+        <Label htmlFor="password">{t('common.password')}</Label>
         <Input
           id="password"
           type="password"
@@ -49,7 +55,9 @@ export function RegisterForm() {
           aria-invalid={!!errors.password}
           {...register('password')}
         />
-        {errors.password && <p className="text-sm text-destructive">{errors.password.message}</p>}
+        {errors.password && (
+          <p className="text-sm text-destructive">{t(errors.password.message as MessageKey)}</p>
+        )}
       </div>
       <div className="flex flex-col gap-2">
         <div className="flex items-start gap-2">
@@ -68,33 +76,35 @@ export function RegisterForm() {
             )}
           />
           <Label htmlFor="agreed" className="inline text-sm leading-snug font-normal">
-            Я согласен с{' '}
+            {t('auth.register.agreePrefix')}{' '}
             <Link
               href="/terms"
               target="_blank"
               className="text-foreground underline underline-offset-4"
             >
-              пользовательским соглашением
+              {t('auth.register.termsLink')}
             </Link>{' '}
-            и{' '}
+            {t('auth.register.and')}{' '}
             <Link
               href="/privacy"
               target="_blank"
               className="text-foreground underline underline-offset-4"
             >
-              политикой обработки персональных данных
+              {t('auth.register.privacyLink')}
             </Link>
           </Label>
         </div>
-        {errors.agreed && <p className="text-sm text-destructive">{errors.agreed.message}</p>}
+        {errors.agreed && (
+          <p className="text-sm text-destructive">{t(errors.agreed.message as MessageKey)}</p>
+        )}
       </div>
       {serverError && (
         <p role="alert" className="text-sm text-destructive">
-          {serverError}
+          {'key' in serverError ? t(serverError.key) : serverError.text}
         </p>
       )}
       <Button type="submit" disabled={isSubmitting}>
-        {isSubmitting ? 'Создаём аккаунт…' : 'Зарегистрироваться'}
+        {isSubmitting ? t('auth.register.submitting') : t('auth.register.submit')}
       </Button>
     </form>
   );

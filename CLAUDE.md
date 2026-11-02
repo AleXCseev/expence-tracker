@@ -30,7 +30,7 @@ Rules:
 - Slices (`features/<name>`, `entities/<name>`, `views/<name>`) are split into segments: `ui/`, `model/` (state, schemas, hooks), `api/`, `lib/`. `shared` has segments only, no slices.
 - Each slice exposes a public API through `index.ts`; import slices only via that entry point (`@/features/auth-login`), never from their internals. Use the `@/*` alias for cross-slice imports and relative paths inside a slice.
 - Client-only code (hooks, state, event handlers) needs `'use client'`; keep pages/views server components where possible.
-- UI text is in Russian.
+- UI text is localized (ru, uk, en) via `src/shared/i18n`: `useI18n()` returns `t(key, params)`; the locale lives in `localStorage` (default `ru`). Add strings to `messages/ru.ts` first (it defines the `Messages` type), then `uk.ts` and `en.ts` — the compiler flags missing keys. Zod schemas carry message keys, not text; the UI translates them with `t(error.message as MessageKey)`. Legal pages have per-locale content components. `features/language-switcher` is a temporary fixed-position switcher mounted in `app/layout.tsx`.
 
 shadcn/ui: configured in `apps/web/components.json` with aliases pointing at `shared` (`ui` → `@/shared/ui`, `utils` → `@/shared/lib/utils`). Add components with `npx shadcn@latest add <name>` from `apps/web` and verify they land in `src/shared/ui`. Theme tokens live in `src/app/globals.css`.
 
