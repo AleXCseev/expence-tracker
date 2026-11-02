@@ -1,3 +1,3 @@
-export default function Home() {
-  return <main>Expense Tracker</main>;
-}
+import { HomePage } from '@/views/home';
+
+export default HomePage;
