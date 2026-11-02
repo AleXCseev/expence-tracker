@@ -17,13 +17,13 @@ export function useRegisterForm() {
 
   const form = useForm<RegisterFormValues>({
     resolver: zodResolver(registerSchema),
-    defaultValues: { name: '', email: '', password: '' },
+    defaultValues: { name: '', email: '', password: '', agreed: false },
   });
 
-  const onSubmit = form.handleSubmit(async (values) => {
+  const onSubmit = form.handleSubmit(async ({ name, email, password }) => {
     setServerError(null);
     try {
-      signIn(await authApi.register(values));
+      signIn(await authApi.register({ name, email, password }));
       router.push('/');
     } catch (error) {
       setServerError(
