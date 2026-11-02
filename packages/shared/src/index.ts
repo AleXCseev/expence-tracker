@@ -9,6 +9,20 @@ export interface ExpenseDto {
 export interface CategoryDto {
   id: string;
   name: string;
+  color: string;
+  icon: string;
+}
+
+export interface CreateCategoryRequest {
+  name: string;
+  color?: string;
+  icon?: string;
+}
+
+export interface UpdateCategoryRequest {
+  name?: string;
+  color?: string;
+  icon?: string;
 }
 
 export interface UserDto {
