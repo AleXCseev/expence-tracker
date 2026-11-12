@@ -53,3 +53,14 @@ Single-workspace commands: `npm run <script> -w apps/api` (or `apps/web`, `packa
 ## Environment
 
 Copy `.env.example` to `.env` at the root **and** to `apps/api/.env` — Prisma reads `DATABASE_URL` from the api directory, while docker-compose reads `POSTGRES_*` from the root. The web app uses `NEXT_PUBLIC_API_URL` (Next.js reads env files from `apps/web`, not the root; it falls back to `http://localhost:4000`, so copy `.env.example` to `apps/web/.env` only if the API URL differs); the API port comes from `API_PORT` (default 4000) and CORS is enabled globally.
+
+
+## Commit conventions
+
+Commit messages follow [Conventional Commits](https://www.conventionalcommits.org/): `<type>(<optional scope>): <description>`.
+
+- Types: `feat`, `fix`, `docs`, `style`, `refactor`, `perf`, `test`, `build`, `ci`, `chore`.
+- Scope is optional and names the area, e.g. `api`, `web`, `shared`, `prisma`, `transactions`: `feat(api): add transactions module`.
+- Description: English, imperative mood, lowercase first letter, no trailing period, header up to ~72 characters. Add a body after a blank line when the *why* is not obvious.
+- Breaking changes: `!` after the type/scope (`feat(api)!: ...`) and/or a `BREAKING CHANGE:` footer.
+- One logical change per commit; commit only when the user asks.
