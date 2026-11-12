@@ -13,14 +13,21 @@ interface RequestOptions {
   method?: 'GET' | 'POST' | 'PATCH' | 'DELETE';
   body?: unknown;
   token?: string | null;
+  query?: Record<string, string | number | undefined>;
 }
 
 export async function http<T>(path: string, options: RequestOptions = {}): Promise<T> {
-  const { method = 'GET', body, token } = options;
+  const { method = 'GET', body, token, query } = options;
+
+  const params = new URLSearchParams();
+  Object.entries(query ?? {}).forEach(([key, value]) => {
+    if (value !== undefined && value !== '') params.set(key, String(value));
+  });
+  const search = params.size > 0 ? `?${params}` : '';
 
   let response: Response;
   try {
-    response = await fetch(`${env.apiUrl}${path}`, {
+    response = await fetch(`${env.apiUrl}${path}${search}`, {
       method,
       headers: {
         ...(body !== undefined && { 'Content-Type': 'application/json' }),
