@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project state
 
-Expense tracker monorepo (npm workspaces, git repository, dependencies installed). No tests or test runner are configured. The API has `/health`, JWT auth (`/auth/register`, `/auth/login`, `/auth/me`) categories CRUD and transactions (`/transactions` CRUD + `/transactions/summary`); the web app has login and registration pages (the JWT is returned in the response body and kept in `localStorage`). Implementation plans live in `.claude/plans/` — keep their checklists up to date.
+Expense tracker monorepo (npm workspaces, git repository, dependencies installed). No tests or test runner are configured. The API has `/health`, JWT auth (`/auth/register`, `/auth/login`, `/auth/me`) categories CRUD and transactions (`/transactions` CRUD + `/transactions/summary`; `GET /transactions` is paginated: `page`/`limit` (default 10, max 100) → `{ items, total, page, limit }`); the web app has login and registration pages (the JWT is returned in the response body and kept in `localStorage`) and a main screen (`/`): sidebar menu, user menu, paginated (10 per page) filterable transactions list; `/categories` is a placeholder. Implementation plans live in `.claude/plans/` — keep their checklists up to date.
 
 ## Layout
 
@@ -19,11 +19,11 @@ Layers, from top to bottom; a layer may import **only from layers below it**, ne
 
 | Layer | Path | Purpose |
 | --- | --- | --- |
-| app | `src/app/` | Next.js routing, root layout, providers, `globals.css`. `page.tsx` files are thin re-exports from `views` (e.g. `export { LoginPage as default } from '@/views/login'`). |
+| app | `src/app/` | Next.js routing, root layout, providers, `globals.css`. `page.tsx` files are thin re-exports from `views` (e.g. `export { LoginPage as default } from '@/views/login'`). Route groups: `(public)` (login, register, legal pages; floating language switcher) and `(dashboard)` (authenticated pages wrapped by `widgets/app-shell`, which holds the auth guard, sidebar and header). |
 | views | `src/views/` | FSD "pages" layer. Named `views` because `src/pages` would conflict with the Next.js Pages Router. One slice per screen. |
 | widgets | `src/widgets/` | Self-contained composite UI blocks that combine features/entities. |
-| features | `src/features/` | User actions with business value (e.g. `auth-login`, `auth-register`). |
-| entities | `src/entities/` | Business entities (e.g. `session`). |
+| features | `src/features/` | User actions with business value (e.g. `auth-login`, `auth-register`, `transaction-filters`). |
+| entities | `src/entities/` | Business entities (`session`, `category`, `transaction`). Hooks take the token as an argument — entities must not import each other. |
 | shared | `src/shared/` | Reusable code with no business logic: `ui/` (shadcn components), `lib/` (`cn`), `api/` (`http` fetch wrapper, `ApiError`), `config/` (`env`). |
 
 Rules:
@@ -54,6 +54,17 @@ Single-workspace commands: `npm run <script> -w apps/api` (or `apps/web`, `packa
 
 Copy `.env.example` to `.env` at the root **and** to `apps/api/.env` — Prisma reads `DATABASE_URL` from the api directory, while docker-compose reads `POSTGRES_*` from the root. The web app uses `NEXT_PUBLIC_API_URL` (Next.js reads env files from `apps/web`, not the root; it falls back to `http://localhost:4000`, so copy `.env.example` to `apps/web/.env` only if the API URL differs); the API port comes from `API_PORT` (default 4000) and CORS is enabled globally.
 
+
+## Branching (GitHub Flow)
+
+New features and fixes follow [GitHub Flow](https://docs.github.com/en/get-started/using-github/github-flow):
+
+- `main` is always stable and deployable; never commit feature work directly to it.
+- Start every new feature/fix from an up-to-date `main` in a dedicated short-lived branch (`git switch main && git pull && git switch -c <type>/<short-name>`).
+- Branch name: `<type>/<kebab-case-description>`, where `<type>` is a Conventional Commits type (`feat`, `fix`, `docs`, `refactor`, `chore`, …), e.g. `feat/main-screen-web`, `fix/transactions-summary`.
+- One branch = one feature; keep it focused and commit in small logical steps following the commit conventions below.
+- When ready, push the branch and open a pull request into `main`; merge only after review and a passing `npm run lint` / `npm run build`. Delete the branch after merging.
+- Create branches, push and open PRs only when the user asks.
 
 ## Commit conventions
 
