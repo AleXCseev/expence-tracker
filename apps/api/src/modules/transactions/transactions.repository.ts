@@ -12,20 +12,29 @@ export interface TransactionTotals {
 export class TransactionsRepository {
   constructor(private readonly prisma: PrismaService) {}
 
-  findManyByUser(
+  async findPageByUser(
     userId: string,
     filters: { dateFrom?: Date; dateTo?: Date; type?: TransactionType; categoryId?: string },
-  ): Promise<Transaction[]> {
+    page: number,
+    limit: number,
+  ): Promise<{ items: Transaction[]; total: number }> {
     const { dateFrom, dateTo, type, categoryId } = filters;
-    return this.prisma.transaction.findMany({
-      where: {
-        userId,
-        type,
-        categoryId,
-        ...(dateFrom || dateTo ? { date: { gte: dateFrom, lte: dateTo } } : {}),
-      },
-      orderBy: [{ date: 'desc' }, { createdAt: 'desc' }],
-    });
+    const where: Prisma.TransactionWhereInput = {
+      userId,
+      type,
+      categoryId,
+      ...(dateFrom || dateTo ? { date: { gte: dateFrom, lte: dateTo } } : {}),
+    };
+    const [items, total] = await this.prisma.$transaction([
+      this.prisma.transaction.findMany({
+        where,
+        orderBy: [{ date: 'desc' }, { createdAt: 'desc' }],
+        skip: (page - 1) * limit,
+        take: limit,
+      }),
+      this.prisma.transaction.count({ where }),
+    ]);
+    return { items, total };
   }
 
   findByIdForUser(id: string, userId: string): Promise<Transaction | null> {
