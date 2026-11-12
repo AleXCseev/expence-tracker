@@ -59,7 +59,7 @@ export class CategoriesService {
       await this.repository.delete(id);
     } catch (error) {
       if (isPrismaError(error, 'P2003')) {
-        throw new ConflictException('Category has expenses');
+        throw new ConflictException('Category has transactions');
       }
       throw error;
     }

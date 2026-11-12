@@ -4,11 +4,11 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project state
 
-Expense tracker monorepo (npm workspaces, git repository, dependencies installed). No tests or test runner are configured. The API has `/health`, JWT auth (`/auth/register`, `/auth/login`, `/auth/me`) and categories CRUD; the web app has login and registration pages (the JWT is returned in the response body and kept in `localStorage`). Implementation plans live in `.claude/plans/` — keep their checklists up to date.
+Expense tracker monorepo (npm workspaces, git repository, dependencies installed). No tests or test runner are configured. The API has `/health`, JWT auth (`/auth/register`, `/auth/login`, `/auth/me`) categories CRUD and transactions (`/transactions` CRUD + `/transactions/summary`); the web app has login and registration pages (the JWT is returned in the response body and kept in `localStorage`). Implementation plans live in `.claude/plans/` — keep their checklists up to date.
 
 ## Layout
 
-- `apps/api` — NestJS 11 backend (`@expense-tracker/api`), Prisma ORM with PostgreSQL. Prisma schema lives in `apps/api/prisma/schema.prisma` (models: `User`, `Category`, `Expense`); `PrismaService`/`PrismaModule` (global) in `apps/api/src/prisma/`. Feature modules go in `apps/api/src/modules/`.
+- `apps/api` — NestJS 11 backend (`@expense-tracker/api`), Prisma ORM with PostgreSQL. Prisma schema lives in `apps/api/prisma/schema.prisma` (models: `User`, `Category`, `Transaction`); `PrismaService`/`PrismaModule` (global) in `apps/api/src/prisma/`. Feature modules go in `apps/api/src/modules/`.
 - `apps/web` — Next.js 15 App Router frontend (`@expense-tracker/web`), Tailwind CSS v4 + shadcn/ui, sources under `src/` organized by Feature-Sliced Design (see below).
 - `packages/shared` — `@expense-tracker/shared`: DTO types shared by both apps. It compiles to `dist/` (`main`/`types` point there), so it must be built (`npm run build -w packages/shared`) before the apps can resolve it; `apps/web` also lists it in `transpilePackages`.
 - `tsconfig.base.json` is extended by every package; the root `eslint.config.mjs` (flat config, typescript-eslint + prettier) covers the whole repo.

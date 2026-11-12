@@ -31,17 +31,17 @@
 
 ## Чеклист реализации
 - [x] 0. Сохранить план в `.claude/plans/transactions.md`
-- [ ] 1. `schema.prisma`: enum, `Transaction`, удалить `Expense`, обратные связи
-- [ ] 2. Миграция `add-transactions` + `npm run db:generate`
-- [ ] 3. `contract/` (view, команды, запросы, index)
-- [ ] 4. repository (+ groupBy для summary)
-- [ ] 5. service (404, проверка категории, summary)
-- [ ] 6. handlers
-- [ ] 7. DTO (create, update, list query, summary query)
-- [ ] 8. controller (summary до `:id`) + module + `app.module.ts`
-- [ ] 9. shared: типы, правка `categories.service.ts`, `CLAUDE.md`
-- [ ] 10. `npm run build`, `prettier --write`, `npm run lint`
-- [ ] 11. Ручная проверка (ниже), очистка тестовых данных
+- [x] 1. `schema.prisma`: enum, `Transaction`, удалить `Expense`, обратные связи
+- [x] 2. Миграция `add-transactions` + `npm run db:generate`
+- [x] 3. `contract/` (view, команды, запросы, index)
+- [x] 4. repository (+ groupBy для summary)
+- [x] 5. service (404, проверка категории, summary)
+- [x] 6. handlers
+- [x] 7. DTO (create, update, list query, summary query)
+- [x] 8. controller (summary до `:id`) + module + `app.module.ts`
+- [x] 9. shared: типы, правка `categories.service.ts`, `CLAUDE.md`
+- [x] 10. `npm run build`, `prettier --write`, `npm run lint`
+- [x] 11. Ручная проверка (ниже), очистка тестовых данных
 - [ ] 12. Коммит — только по просьбе
 
 ## Verification
