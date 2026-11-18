@@ -52,7 +52,7 @@ Single-workspace commands: `npm run <script> -w apps/api` (or `apps/web`, `packa
 
 ## Environment
 
-Copy `.env.example` to `.env` at the root **and** to `apps/api/.env` — Prisma reads `DATABASE_URL` from the api directory, while docker-compose reads `POSTGRES_*` from the root. The web app uses `NEXT_PUBLIC_API_URL` (Next.js reads env files from `apps/web`, not the root; it falls back to `http://localhost:4000`, so copy `.env.example` to `apps/web/.env` only if the API URL differs); the API port comes from `API_PORT` (default 4000) and CORS is enabled globally.
+Copy `.env.example` to `.env` at the root **and** to `apps/api/.env` — Prisma reads `DATABASE_URL` from the api directory, while docker-compose reads `POSTGRES_*` from the root. The web app uses `NEXT_PUBLIC_API_URL` (Next.js reads env files from `apps/web`, not the root; it falls back to `http://localhost:4000`, so copy `.env.example` to `apps/web/.env` only if the API URL differs); the API port comes from `API_PORT` (default 4000); CORS is limited to the origins in `CORS_ORIGIN` (comma-separated, default `http://localhost:3000`), `helmet` sets security headers and unknown request fields are rejected (`forbidNonWhitelisted`). In production `JWT_SECRET` must be at least 32 characters, otherwise the API refuses to start.
 
 
 ## Branching (GitHub Flow)
