@@ -18,11 +18,15 @@ export class CategoriesRepository {
     return this.prisma.category.create({ data });
   }
 
-  update(id: string, data: { name?: string; color?: string; icon?: string }): Promise<Category> {
-    return this.prisma.category.update({ where: { id }, data });
+  update(
+    id: string,
+    userId: string,
+    data: { name?: string; color?: string; icon?: string },
+  ): Promise<Category> {
+    return this.prisma.category.update({ where: { id, userId }, data });
   }
 
-  async delete(id: string): Promise<void> {
-    await this.prisma.category.delete({ where: { id } });
+  async delete(id: string, userId: string): Promise<void> {
+    await this.prisma.category.delete({ where: { id, userId } });
   }
 }

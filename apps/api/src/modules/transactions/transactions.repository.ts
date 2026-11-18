@@ -54,6 +54,7 @@ export class TransactionsRepository {
 
   update(
     id: string,
+    userId: string,
     data: {
       amount?: number;
       type?: TransactionType;
@@ -62,11 +63,11 @@ export class TransactionsRepository {
       categoryId?: string;
     },
   ): Promise<Transaction> {
-    return this.prisma.transaction.update({ where: { id }, data });
+    return this.prisma.transaction.update({ where: { id, userId }, data });
   }
 
-  async delete(id: string): Promise<void> {
-    await this.prisma.transaction.delete({ where: { id } });
+  async delete(id: string, userId: string): Promise<void> {
+    await this.prisma.transaction.delete({ where: { id, userId } });
   }
 
   async totalsByCategory(userId: string, from: Date, to: Date): Promise<TransactionTotals[]> {
