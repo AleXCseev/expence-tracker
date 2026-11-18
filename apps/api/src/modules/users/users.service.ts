@@ -1,5 +1,5 @@
 import { ConflictException, Injectable } from '@nestjs/common';
-import { User } from '@prisma/client';
+import { Prisma, User } from '@prisma/client';
 import { compare, hash, hashSync } from 'bcryptjs';
 import { SafeUser } from './contract';
 import { UsersRepository } from './users.repository';
@@ -27,12 +27,20 @@ export class UsersService {
       throw new ConflictException('Email already registered');
     }
     const passwordHash = await hash(input.password, BCRYPT_COST);
-    const user = await this.repository.create({
-      name: input.name.trim(),
-      email,
-      passwordHash,
-    });
-    return toSafeUser(user);
+    try {
+      const user = await this.repository.create({
+        name: input.name.trim(),
+        email,
+        passwordHash,
+      });
+      return toSafeUser(user);
+    } catch (error) {
+      // Параллельная регистрация с тем же email проскочила проверку выше.
+      if (error instanceof Prisma.PrismaClientKnownRequestError && error.code === 'P2002') {
+        throw new ConflictException('Email already registered');
+      }
+      throw error;
+    }
   }
 
   async findById(id: string): Promise<SafeUser | null> {

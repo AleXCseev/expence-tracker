@@ -1,10 +1,11 @@
-import { IsEmail, IsString, MaxLength } from 'class-validator';
+import { IsEmail, IsString } from 'class-validator';
+import { MaxBytes } from './max-bytes.decorator';
 
 export class LoginDto {
   @IsEmail()
   email!: string;
 
   @IsString()
-  @MaxLength(72)
+  @MaxBytes(72)
   password!: string;
 }
