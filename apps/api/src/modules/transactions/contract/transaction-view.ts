@@ -1,5 +1,12 @@
 export type TransactionType = 'INCOME' | 'EXPENSE';
 
+export interface PaginatedView<T> {
+  items: T[];
+  total: number;
+  page: number;
+  limit: number;
+}
+
 export interface TransactionView {
   id: string;
   amount: string;

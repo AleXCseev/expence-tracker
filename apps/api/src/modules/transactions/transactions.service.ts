@@ -3,6 +3,7 @@ import { QueryBus } from '@nestjs/cqrs';
 import { Prisma, Transaction } from '@prisma/client';
 import { CategoryView, GetUserCategoriesQuery } from '../categories/contract';
 import {
+  PaginatedView,
   TransactionFilters,
   TransactionSummaryView,
   TransactionType,
@@ -42,8 +43,14 @@ export class TransactionsService {
     return toView(await this.repository.create({ userId, ...input }));
   }
 
-  async findAll(userId: string, filters: TransactionFilters): Promise<TransactionView[]> {
-    return (await this.repository.findManyByUser(userId, filters)).map(toView);
+  async findAll(
+    userId: string,
+    filters: TransactionFilters,
+    page: number,
+    limit: number,
+  ): Promise<PaginatedView<TransactionView>> {
+    const { items, total } = await this.repository.findPageByUser(userId, filters, page, limit);
+    return { items: items.map(toView), total, page, limit };
   }
 
   async findOne(userId: string, id: string): Promise<TransactionView> {

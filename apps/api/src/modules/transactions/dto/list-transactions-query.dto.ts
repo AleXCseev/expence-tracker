@@ -1,6 +1,6 @@
 import { TransactionType } from '@prisma/client';
 import { Type } from 'class-transformer';
-import { IsDate, IsEnum, IsNotEmpty, IsOptional, IsString } from 'class-validator';
+import { IsDate, IsEnum, IsInt, IsNotEmpty, IsOptional, IsString, Max, Min } from 'class-validator';
 
 export class ListTransactionsQueryDto {
   @IsOptional()
@@ -21,4 +21,17 @@ export class ListTransactionsQueryDto {
   @IsString()
   @IsNotEmpty()
   categoryId?: string;
+
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  @Min(1)
+  page: number = 1;
+
+  @IsOptional()
+  @Type(() => Number)
+  @IsInt()
+  @Min(1)
+  @Max(100)
+  limit: number = 10;
 }

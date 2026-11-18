@@ -11,5 +11,7 @@ export class GetUserTransactionsQuery {
   constructor(
     public readonly userId: string,
     public readonly filters: TransactionFilters,
+    public readonly page: number,
+    public readonly limit: number,
   ) {}
 }

@@ -11,6 +11,22 @@ export interface TransactionDto {
   updatedAt: string;
 }
 
+export interface PaginatedResponse<T> {
+  items: T[];
+  total: number;
+  page: number;
+  limit: number;
+}
+
+export interface ListTransactionsQuery {
+  page?: number;
+  limit?: number;
+  type?: TransactionType;
+  categoryId?: string;
+  dateFrom?: string;
+  dateTo?: string;
+}
+
 export interface CreateTransactionRequest {
   amount: number;
   type: TransactionType;

@@ -20,6 +20,7 @@ import {
   GetTransactionQuery,
   GetTransactionsSummaryQuery,
   GetUserTransactionsQuery,
+  PaginatedView,
   TransactionSummaryView,
   TransactionView,
   UpdateTransactionCommand,
@@ -57,17 +58,22 @@ export class TransactionsController {
   findAll(
     @CurrentUser() user: AuthUser,
     @Query() query: ListTransactionsQueryDto,
-  ): Promise<TransactionView[]> {
+  ): Promise<PaginatedView<TransactionView>> {
     if (query.dateFrom && query.dateTo && query.dateFrom > query.dateTo) {
       throw new BadRequestException('dateFrom must not be later than dateTo');
     }
     return this.queryBus.execute(
-      new GetUserTransactionsQuery(user.id, {
-        dateFrom: query.dateFrom,
-        dateTo: query.dateTo,
-        type: query.type,
-        categoryId: query.categoryId,
-      }),
+      new GetUserTransactionsQuery(
+        user.id,
+        {
+          dateFrom: query.dateFrom,
+          dateTo: query.dateTo,
+          type: query.type,
+          categoryId: query.categoryId,
+        },
+        query.page,
+        query.limit,
+      ),
     );
   }
 
