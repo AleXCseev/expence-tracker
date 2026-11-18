@@ -42,6 +42,7 @@ export const uk: Messages = {
   errors: {
     generic: 'Щось пішло не так',
     network: 'Не вдалося підключитися до сервера',
+    tooManyRequests: 'Забагато запитів, спробуйте пізніше',
   },
   nav: {
     appName: 'Expense Tracker',

@@ -9,6 +9,15 @@ export class ApiError extends Error {
   }
 }
 
+type UnauthorizedHandler = () => void;
+
+let unauthorizedHandler: UnauthorizedHandler | null = null;
+
+/** Вызывается, когда сервер отвечает 401 на запрос с токеном (сессия истекла или недействительна). */
+export function setUnauthorizedHandler(handler: UnauthorizedHandler | null): void {
+  unauthorizedHandler = handler;
+}
+
 interface RequestOptions {
   method?: 'GET' | 'POST' | 'PATCH' | 'DELETE';
   body?: unknown;
@@ -42,6 +51,7 @@ export async function http<T>(path: string, options: RequestOptions = {}): Promi
   const data: unknown = await response.json().catch(() => null);
 
   if (!response.ok) {
+    if (response.status === 401 && token) unauthorizedHandler?.();
     const message = (data as { message?: string | string[] } | null)?.message;
     const messages = Array.isArray(message) ? message : message ? [message] : [response.statusText];
     throw new ApiError(response.status, messages);

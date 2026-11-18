@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 
+import { useRedirectIfAuthenticated } from '@/entities/session';
 import { RegisterForm } from '@/features/auth-register';
 import { useI18n } from '@/shared/i18n';
 import {
@@ -15,6 +16,7 @@ import {
 
 export function RegisterPage() {
   const { t } = useI18n();
+  useRedirectIfAuthenticated();
 
   return (
     <main className="flex min-h-screen items-center justify-center p-4">

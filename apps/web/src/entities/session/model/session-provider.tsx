@@ -4,6 +4,8 @@ import { createContext, useCallback, useContext, useEffect, useMemo, useState } 
 import type { ReactNode } from 'react';
 import type { AuthResponse, UserDto } from '@expense-tracker/shared';
 
+import { setUnauthorizedHandler } from '@/shared/api/http';
+
 const STORAGE_KEY = 'expense-tracker.session';
 
 interface SessionContextValue {
@@ -40,6 +42,12 @@ export function SessionProvider({ children }: { children: ReactNode }) {
     localStorage.removeItem(STORAGE_KEY);
     setSession(null);
   }, []);
+
+  // Любой запрос с токеном, получивший 401, завершает сессию: guard перенаправит на /login.
+  useEffect(() => {
+    setUnauthorizedHandler(signOut);
+    return () => setUnauthorizedHandler(null);
+  }, [signOut]);
 
   const value = useMemo<SessionContextValue>(
     () => ({
