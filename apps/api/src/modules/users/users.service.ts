@@ -1,10 +1,14 @@
 import { ConflictException, Injectable } from '@nestjs/common';
 import { User } from '@prisma/client';
-import { compare, hash } from 'bcryptjs';
+import { compare, hash, hashSync } from 'bcryptjs';
 import { SafeUser } from './contract';
 import { UsersRepository } from './users.repository';
 
 const BCRYPT_COST = 10;
+
+// Хеш для сравнения, когда пользователя нет: время ответа не должно выдавать,
+// зарегистрирован ли email.
+const DUMMY_HASH = hashSync('timing-attack-protection', BCRYPT_COST);
 
 const toSafeUser = (user: User): SafeUser => ({
   id: user.id,
@@ -38,10 +42,8 @@ export class UsersService {
 
   async validateCredentials(email: string, password: string): Promise<SafeUser | null> {
     const user = await this.repository.findByEmail(email.trim().toLowerCase());
-    if (!user || !(await compare(password, user.passwordHash))) {
-      return null;
-    }
-    return toSafeUser(user);
+    const passwordMatches = await compare(password, user?.passwordHash ?? DUMMY_HASH);
+    return user && passwordMatches ? toSafeUser(user) : null;
   }
 
   touchLogin(id: string): Promise<void> {

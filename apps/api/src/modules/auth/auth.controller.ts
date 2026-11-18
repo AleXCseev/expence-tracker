@@ -1,5 +1,6 @@
 import { Body, Controller, Get, HttpCode, Post, UseGuards } from '@nestjs/common';
 import { CommandBus, QueryBus } from '@nestjs/cqrs';
+import { Throttle } from '@nestjs/throttler';
 import { SafeUser } from '../users/contract';
 import { AuthResult } from './auth-response';
 import { LoginCommand } from './commands/login.command';
@@ -10,6 +11,9 @@ import { RegisterDto } from './dto/register.dto';
 import { JwtAuthGuard } from './jwt-auth.guard';
 import { GetCurrentUserQuery } from './queries/get-current-user.query';
 
+// Защита от перебора паролей и массовой регистрации: не более 5 попыток в минуту с одного IP.
+const AUTH_THROTTLE = { default: { limit: 5, ttl: 60_000 } };
+
 @Controller('auth')
 export class AuthController {
   constructor(
@@ -18,11 +22,13 @@ export class AuthController {
   ) {}
 
   @Post('register')
+  @Throttle(AUTH_THROTTLE)
   register(@Body() dto: RegisterDto): Promise<AuthResult> {
     return this.commandBus.execute(new RegisterCommand(dto.name, dto.email, dto.password));
   }
 
   @Post('login')
+  @Throttle(AUTH_THROTTLE)
   @HttpCode(200)
   login(@Body() dto: LoginDto): Promise<AuthResult> {
     return this.commandBus.execute(new LoginCommand(dto.email, dto.password));
