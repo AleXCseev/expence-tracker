@@ -42,6 +42,7 @@ export const en: Messages = {
   errors: {
     generic: 'Something went wrong',
     network: 'Could not connect to the server',
+    tooManyRequests: 'Too many requests, please try again later',
   },
   nav: {
     appName: 'Expense Tracker',

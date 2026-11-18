@@ -40,6 +40,7 @@ export const ru = {
   errors: {
     generic: 'Что-то пошло не так',
     network: 'Не удалось подключиться к серверу',
+    tooManyRequests: 'Слишком много запросов, попробуйте позже',
   },
   nav: {
     appName: 'Expense Tracker',

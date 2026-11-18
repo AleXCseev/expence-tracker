@@ -6,21 +6,9 @@ import { zodResolver } from '@hookform/resolvers/zod';
 
 import { useSession } from '@/entities/session';
 import { transactionApi } from '@/entities/transaction';
-import { ApiError } from '@/shared/api/http';
-import type { MessageKey } from '@/shared/i18n';
+import { toServerError, type ServerError } from '@/shared/api/server-error';
 
 import { createTransactionSchema, type CreateTransactionFormValues } from './schema';
-
-/** Ключ перевода для известных ошибок или сырой текст, пришедший с бэкенда */
-export type ServerError = { key: MessageKey } | { text: string };
-
-function toServerError(error: unknown): ServerError {
-  if (error instanceof ApiError) {
-    if (error.status === 0) return { key: 'errors.network' };
-    return { text: error.messages.join('. ') };
-  }
-  return { key: 'errors.generic' };
-}
 
 function today(): string {
   const now = new Date();

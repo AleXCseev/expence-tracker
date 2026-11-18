@@ -1,7 +1,5 @@
 'use client';
 
-import { useEffect } from 'react';
-
 import { useCategories } from '@/entities/category';
 import { useSession } from '@/entities/session';
 import { PAGE_SIZE, TransactionRow, emptyFilters, useTransactions } from '@/entities/transaction';
@@ -15,15 +13,10 @@ import { Skeleton } from '@/shared/ui/skeleton';
 
 export function TransactionsList() {
   const { t } = useI18n();
-  const { token, signOut } = useSession();
+  const { token } = useSession();
   const { categories, byId } = useCategories(token);
   const { filters, setFilters, page, setPage, data, loading, error, reload } =
     useTransactions(token);
-
-  // Токен истёк или недействителен — завершаем сессию, guard перенаправит на /login.
-  useEffect(() => {
-    if (error?.status === 401) signOut();
-  }, [error, signOut]);
 
   const pages = data ? Math.max(1, Math.ceil(data.total / PAGE_SIZE)) : 1;
   const isFiltered = Object.values(filters).some(Boolean);

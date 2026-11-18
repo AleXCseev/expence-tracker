@@ -4,11 +4,17 @@ import { useEffect, type ReactNode } from 'react';
 import { useRouter } from 'next/navigation';
 
 import { useSession } from '@/entities/session';
-import { AppSidebar } from '@/widgets/app-sidebar';
-import { UserMenu } from '@/widgets/user-menu';
 
-// Каркас авторизованной части приложения: guard + боковое меню + шапка с профилем.
-export function AppShell({ children }: { children: ReactNode }) {
+interface AppShellProps {
+  /** Боковое меню: передаётся сверху (слой app), чтобы виджеты не импортировали друг друга */
+  sidebar: ReactNode;
+  /** Содержимое шапки (меню пользователя) */
+  header: ReactNode;
+  children: ReactNode;
+}
+
+// Каркас авторизованной части приложения: guard + боковое меню + шапка.
+export function AppShell({ sidebar, header, children }: AppShellProps) {
   const router = useRouter();
   const { user, ready } = useSession();
 
@@ -20,10 +26,10 @@ export function AppShell({ children }: { children: ReactNode }) {
 
   return (
     <div className="flex min-h-screen flex-col md:flex-row">
-      <AppSidebar />
+      {sidebar}
       <div className="flex min-w-0 flex-1 flex-col">
         <header className="flex items-center justify-end border-b px-4 py-3 md:px-8">
-          <UserMenu />
+          {header}
         </header>
         <main className="flex-1 p-4 md:p-8">{children}</main>
       </div>

@@ -6,22 +6,9 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 
 import { authApi, useSession } from '@/entities/session';
-import { ApiError } from '@/shared/api/http';
-import type { MessageKey } from '@/shared/i18n';
+import { toServerError, type ServerError } from '@/shared/api/server-error';
 
 import { loginSchema, type LoginFormValues } from './schema';
-
-/** Ключ перевода для известных ошибок или сырой текст, пришедший с бэкенда */
-export type ServerError = { key: MessageKey } | { text: string };
-
-function toServerError(error: unknown): ServerError {
-  if (error instanceof ApiError) {
-    if (error.status === 401) return { key: 'auth.login.invalidCredentials' };
-    if (error.status === 0) return { key: 'errors.network' };
-    return { text: error.messages.join('. ') };
-  }
-  return { key: 'errors.generic' };
-}
 
 export function useLoginForm() {
   const router = useRouter();
@@ -39,7 +26,7 @@ export function useLoginForm() {
       signIn(await authApi.login(values));
       router.push('/');
     } catch (error) {
-      setServerError(toServerError(error));
+      setServerError(toServerError(error, { 401: 'auth.login.invalidCredentials' }));
     }
   });
 

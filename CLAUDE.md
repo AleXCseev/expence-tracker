@@ -29,6 +29,8 @@ Layers, from top to bottom; a layer may import **only from layers below it**, ne
 Rules:
 - Slices (`features/<name>`, `entities/<name>`, `views/<name>`) are split into segments: `ui/`, `model/` (state, schemas, hooks), `api/`, `lib/`. `shared` has segments only, no slices.
 - Each slice exposes a public API through `index.ts`; import slices only via that entry point (`@/features/auth-login`), never from their internals. Use the `@/*` alias for cross-slice imports and relative paths inside a slice.
+- Widgets must not import other widgets: compose them in the `app` layer and pass them in as slots (see `app/(dashboard)/layout.tsx` → `AppShell` `sidebar`/`header`).
+- HTTP errors: `shared/api/http` calls the handler set by `SessionProvider` on any `401` for a request with a token (signs the user out); forms convert errors with `toServerError` from `shared/api/server-error` (status overrides via the second argument).
 - Client-only code (hooks, state, event handlers) needs `'use client'`; keep pages/views server components where possible.
 - UI text is localized (ru, uk, en) via `src/shared/i18n`: `useI18n()` returns `t(key, params)`; the locale lives in `localStorage` (default `ru`). Add strings to `messages/ru.ts` first (it defines the `Messages` type), then `uk.ts` and `en.ts` — the compiler flags missing keys. Zod schemas carry message keys, not text; the UI translates them with `t(error.message as MessageKey)`. Legal pages have per-locale content components. `features/language-switcher` is a temporary fixed-position switcher mounted in `app/layout.tsx`.
 
