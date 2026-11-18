@@ -6,6 +6,9 @@ import type { AuthResponse, UserDto } from '@expense-tracker/shared';
 
 import { setUnauthorizedHandler } from '@/shared/api/http';
 
+import { authApi } from '../api/auth-api';
+import { parseStoredSession } from './stored-session';
+
 const STORAGE_KEY = 'expense-tracker.session';
 
 interface SessionContextValue {
@@ -24,11 +27,27 @@ export function SessionProvider({ children }: { children: ReactNode }) {
   const [ready, setReady] = useState(false);
 
   useEffect(() => {
+    let restored: AuthResponse | null = null;
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
-      if (raw) setSession(JSON.parse(raw) as AuthResponse);
+      if (raw) {
+        restored = parseStoredSession(raw);
+        if (!restored) localStorage.removeItem(STORAGE_KEY);
+      }
     } catch {
-      localStorage.removeItem(STORAGE_KEY);
+      // localStorage недоступен — начинаем без сессии
+    }
+    if (restored) {
+      setSession(restored);
+      const { accessToken } = restored;
+      // Проверяем токен на сервере: при 401 http-клиент сам завершит сессию (см. ниже);
+      // при сетевой ошибке оставляем сохранённую сессию.
+      authApi
+        .me(accessToken)
+        .then((user) =>
+          setSession((current) => (current?.accessToken === accessToken ? { ...current, user } : current)),
+        )
+        .catch(() => {});
     }
     setReady(true);
   }, []);
