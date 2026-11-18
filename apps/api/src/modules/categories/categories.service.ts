@@ -37,6 +37,10 @@ export class CategoriesService {
     return (await this.repository.findAllByUser(userId)).map(toView);
   }
 
+  async findOne(userId: string, id: string): Promise<CategoryView> {
+    return toView(await this.getOwned(userId, id));
+  }
+
   async update(
     userId: string,
     id: string,
@@ -44,7 +48,7 @@ export class CategoriesService {
   ): Promise<CategoryView> {
     await this.getOwned(userId, id);
     try {
-      return toView(await this.repository.update(id, changes));
+      return toView(await this.repository.update(id, userId, changes));
     } catch (error) {
       if (isPrismaError(error, 'P2002')) {
         throw new ConflictException('Category already exists');
@@ -56,7 +60,7 @@ export class CategoriesService {
   async remove(userId: string, id: string): Promise<void> {
     await this.getOwned(userId, id);
     try {
-      await this.repository.delete(id);
+      await this.repository.delete(id, userId);
     } catch (error) {
       if (isPrismaError(error, 'P2003')) {
         throw new ConflictException('Category has transactions');

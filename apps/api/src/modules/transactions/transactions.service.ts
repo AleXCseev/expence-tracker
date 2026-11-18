@@ -1,7 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { QueryBus } from '@nestjs/cqrs';
 import { Prisma, Transaction } from '@prisma/client';
-import { CategoryView, GetUserCategoriesQuery } from '../categories/contract';
+import { GetCategoryQuery } from '../categories/contract';
 import {
   PaginatedView,
   TransactionFilters,
@@ -72,12 +72,12 @@ export class TransactionsService {
     if (changes.categoryId !== undefined) {
       await this.assertCategoryOwned(userId, changes.categoryId);
     }
-    return toView(await this.repository.update(id, changes));
+    return toView(await this.repository.update(id, userId, changes));
   }
 
   async remove(userId: string, id: string): Promise<void> {
     await this.getOwned(userId, id);
-    await this.repository.delete(id);
+    await this.repository.delete(id, userId);
   }
 
   async summary(userId: string, month: number, year: number): Promise<TransactionSummaryView> {
@@ -115,11 +115,7 @@ export class TransactionsService {
   }
 
   private async assertCategoryOwned(userId: string, categoryId: string): Promise<void> {
-    const categories: CategoryView[] = await this.queryBus.execute(
-      new GetUserCategoriesQuery(userId),
-    );
-    if (!categories.some((category) => category.id === categoryId)) {
-      throw new NotFoundException('Category not found');
-    }
+    // Запрос бросает NotFoundException, если категории нет или она чужая.
+    await this.queryBus.execute(new GetCategoryQuery(userId, categoryId));
   }
 }

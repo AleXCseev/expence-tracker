@@ -6,6 +6,7 @@ import { CategoriesService } from './categories.service';
 import { CreateCategoryHandler } from './commands/create-category.handler';
 import { DeleteCategoryHandler } from './commands/delete-category.handler';
 import { UpdateCategoryHandler } from './commands/update-category.handler';
+import { GetCategoryHandler } from './queries/get-category.handler';
 import { GetUserCategoriesHandler } from './queries/get-user-categories.handler';
 
 @Module({
@@ -18,6 +19,7 @@ import { GetUserCategoriesHandler } from './queries/get-user-categories.handler'
     UpdateCategoryHandler,
     DeleteCategoryHandler,
     GetUserCategoriesHandler,
+    GetCategoryHandler,
   ],
 })
 export class CategoriesModule {}
