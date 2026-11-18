@@ -1,25 +1,46 @@
 'use client';
 
+import { useState } from 'react';
+
 import { useCategories } from '@/entities/category';
 import { useSession } from '@/entities/session';
-import { PAGE_SIZE, TransactionRow, emptyFilters, useTransactions } from '@/entities/transaction';
+import { TransactionRow, useTransactions } from '@/entities/transaction';
 import { CreateTransactionDialog } from '@/features/transaction-create';
-import { TransactionFilters } from '@/features/transaction-filters';
+import {
+  TransactionFilters,
+  emptyFilters,
+  hasActiveFilters,
+  toListQuery,
+  type TransactionListFilters,
+} from '@/features/transaction-filters';
 import { useI18n } from '@/shared/i18n';
 import { Button } from '@/shared/ui/button';
 import { Card } from '@/shared/ui/card';
 import { Pagination } from '@/shared/ui/pagination';
 import { Skeleton } from '@/shared/ui/skeleton';
 
+const PAGE_SIZE = 10;
+
 export function TransactionsList() {
   const { t } = useI18n();
   const { token } = useSession();
   const { categories, byId } = useCategories(token);
-  const { filters, setFilters, page, setPage, data, loading, error, reload } =
-    useTransactions(token);
+  const [filters, setFiltersState] = useState<TransactionListFilters>(emptyFilters);
+  const [page, setPage] = useState(1);
+  const { data, loading, error, reload } = useTransactions(token, {
+    page,
+    limit: PAGE_SIZE,
+    ...toListQuery(filters),
+  });
+
+  // Смена фильтров всегда возвращает на первую страницу.
+  const setFilters = (next: TransactionListFilters) => {
+    setFiltersState(next);
+    setPage(1);
+  };
 
   const pages = data ? Math.max(1, Math.ceil(data.total / PAGE_SIZE)) : 1;
-  const isFiltered = Object.values(filters).some(Boolean);
+  const isFiltered = hasActiveFilters(filters);
 
   // Новая транзакция должна быть видна: сбрасываем фильтры и возвращаемся на первую страницу.
   const handleCreated = () => {
