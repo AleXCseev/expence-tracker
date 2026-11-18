@@ -6,6 +6,7 @@ import { AuthController } from './auth.controller';
 import { LoginHandler } from './commands/login.handler';
 import { RegisterHandler } from './commands/register.handler';
 import { JwtAuthGuard } from './jwt-auth.guard';
+import { resolveJwtSecret } from './jwt-secret';
 import { GetCurrentUserHandler } from './queries/get-current-user.handler';
 import { TokenService } from './token.service';
 
@@ -14,7 +15,7 @@ import { TokenService } from './token.service';
     JwtModule.registerAsync({
       inject: [ConfigService],
       useFactory: (config: ConfigService) => ({
-        secret: config.getOrThrow<string>('JWT_SECRET'),
+        secret: resolveJwtSecret(config),
         signOptions: {
           expiresIn: (config.get<string>('JWT_EXPIRES_IN') ?? '1h') as StringValue,
         },
