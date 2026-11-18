@@ -1,4 +1,5 @@
 import { IsEmail, IsString, MaxLength, MinLength } from 'class-validator';
+import { MaxBytes } from './max-bytes.decorator';
 
 export class RegisterDto {
   @IsString()
@@ -11,6 +12,6 @@ export class RegisterDto {
 
   @IsString()
   @MinLength(8)
-  @MaxLength(72)
+  @MaxBytes(72)
   password!: string;
 }

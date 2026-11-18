@@ -32,7 +32,7 @@ export const uk: Messages = {
     validation: {
       email: 'Введіть коректний email',
       passwordRequired: 'Введіть пароль',
-      passwordMax: 'Не більше 72 символів',
+      passwordMax: 'Пароль занадто довгий (не більше 72 байтів)',
       passwordMin: 'Мінімум 8 символів',
       nameRequired: 'Введіть ім’я',
       nameMax: 'Не більше 100 символів',

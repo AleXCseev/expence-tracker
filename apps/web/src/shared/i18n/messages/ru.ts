@@ -30,7 +30,7 @@ export const ru = {
     validation: {
       email: 'Введите корректный email',
       passwordRequired: 'Введите пароль',
-      passwordMax: 'Не более 72 символов',
+      passwordMax: 'Пароль слишком длинный (не более 72 байт)',
       passwordMin: 'Минимум 8 символов',
       nameRequired: 'Введите имя',
       nameMax: 'Не более 100 символов',

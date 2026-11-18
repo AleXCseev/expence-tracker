@@ -32,7 +32,7 @@ export const en: Messages = {
     validation: {
       email: 'Enter a valid email',
       passwordRequired: 'Enter your password',
-      passwordMax: 'At most 72 characters',
+      passwordMax: 'Password is too long (at most 72 bytes)',
       passwordMin: 'At least 8 characters',
       nameRequired: 'Enter your name',
       nameMax: 'At most 100 characters',
