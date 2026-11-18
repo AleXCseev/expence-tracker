@@ -1,25 +1,23 @@
-import { Controller, Get, Module } from '@nestjs/common';
+import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { APP_GUARD } from '@nestjs/core';
 import { CqrsModule } from '@nestjs/cqrs';
 import { ThrottlerGuard, ThrottlerModule } from '@nestjs/throttler';
+import { validateEnv } from './config/validate-env';
+import { HealthModule } from './health/health.module';
 import { AuthModule } from './modules/auth/auth.module';
 import { CategoriesModule } from './modules/categories/categories.module';
 import { TransactionsModule } from './modules/transactions/transactions.module';
 import { UsersModule } from './modules/users/users.module';
 import { PrismaModule } from './prisma/prisma.module';
 
-@Controller('health')
-class HealthController {
-  @Get()
-  check() {
-    return { status: 'ok' };
-  }
-}
-
 @Module({
   imports: [
-    ConfigModule.forRoot({ isGlobal: true, envFilePath: ['.env', '../../.env'] }),
+    ConfigModule.forRoot({
+      isGlobal: true,
+      envFilePath: ['.env', '../../.env'],
+      validate: validateEnv,
+    }),
     // Общий лимит на все эндпоинты; auth-эндпоинты ужесточены через @Throttle.
     ThrottlerModule.forRoot([{ ttl: 60_000, limit: 100 }]),
     CqrsModule.forRoot(),
@@ -28,8 +26,8 @@ class HealthController {
     AuthModule,
     CategoriesModule,
     TransactionsModule,
+    HealthModule,
   ],
-  controllers: [HealthController],
   providers: [{ provide: APP_GUARD, useClass: ThrottlerGuard }],
 })
 export class AppModule {}

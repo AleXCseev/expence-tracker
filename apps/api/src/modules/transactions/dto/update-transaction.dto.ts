@@ -29,7 +29,7 @@ export class UpdateTransactionDto {
   @Transform(trim)
   @IsString()
   @MaxLength(500)
-  description?: string;
+  description?: string | null;
 
   @IsOptional()
   @Type(() => Date)

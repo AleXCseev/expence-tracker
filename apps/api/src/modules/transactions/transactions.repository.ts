@@ -58,7 +58,7 @@ export class TransactionsRepository {
     data: {
       amount?: number;
       type?: TransactionType;
-      description?: string;
+      description?: string | null;
       date?: Date;
       categoryId?: string;
     },
