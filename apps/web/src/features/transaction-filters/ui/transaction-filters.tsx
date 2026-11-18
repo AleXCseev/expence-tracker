@@ -2,12 +2,13 @@
 
 import type { CategoryDto, TransactionType } from '@expense-tracker/shared';
 
-import { emptyFilters, type TransactionListFilters } from '@/entities/transaction';
 import { useI18n } from '@/shared/i18n';
 import { Button } from '@/shared/ui/button';
 import { Input } from '@/shared/ui/input';
 import { Label } from '@/shared/ui/label';
 import { Select } from '@/shared/ui/select';
+
+import { emptyFilters, hasActiveFilters, type TransactionListFilters } from '../model/filters';
 
 interface TransactionFiltersProps {
   value: TransactionListFilters;
@@ -17,7 +18,7 @@ interface TransactionFiltersProps {
 
 export function TransactionFilters({ value, categories, onChange }: TransactionFiltersProps) {
   const { t } = useI18n();
-  const isDirty = Object.values(value).some(Boolean);
+  const isDirty = hasActiveFilters(value);
 
   return (
     <div className="grid gap-3 sm:grid-cols-2 lg:grid-cols-5 lg:items-end">
